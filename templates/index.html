@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RsChat_Boot_AI - Free AI Assistant for Students</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .model-select, .prompt-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .model-select:hover, .prompt-select:hover {
+            border-color: #667eea;
+        }
+
+        .prompt-types {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .prompt-btn {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .prompt-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .prompt-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-message .message-icon {
+            background: #667eea;
+            color: white;
+        }
+
+        .bot-message .message-icon {
+            background: #764ba2;
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .message-text {
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .input-area {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn, .reset-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .performance-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #1976d2;
+        }
+
+        .performance-info div {
+            margin-bottom: 8px;
+        }
+
+        .performance-info div:last-child {
+            margin-bottom: 0;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+
+        .welcome-message h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .welcome-message p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-robot"></i> RsChat_Boot_AI</h1>
+                <div class="subtitle">Free AI Assistant for Students - Powered by AWS Bedrock</div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages: <strong id="messageCount">0</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-coins"></i>
+                    <span>Tokens: <strong id="tokenCount">0</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="section">
+                    <h3><i class="fas fa-brain"></i> Model Selection</h3>
+                    <select class="model-select" id="modelSelect">
+                        <option value="amazon.nova-lite-v1:0">Amazon Nova Lite (Fast)</option>
+                        <option value="amazon.nova-pro-v1:0">Amazon Nova Pro (Balanced)</option>
+                        <option value="amazon.nova-micro-v1:0">Amazon Nova Micro (Efficient)</option>
+                        <option value="anthropic.claude-3-haiku-20240307-v1:0">Claude 3 Haiku</option>
+                        <option value="meta.llama3-8b-instruct-v1:0">Llama 3 8B</option>
+                    </select>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-magic"></i> Prompt Engineering</h3>
+                    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Select how you want the AI to respond:</p>
+                    <div class="prompt-types">
+                        <button class="prompt-btn active" data-type="general">
+                            <i class="fas fa-comment"></i> General Response
+                        </button>
+                        <button class="prompt-btn" data-type="simple">
+                            <i class="fas fa-graduation-cap"></i> Simple (For Students)
+                        </button>
+                        <button class="prompt-btn" data-type="detailed">
+                            <i class="fas fa-list"></i> Detailed Explanation
+                        </button>
+                        <button class="prompt-btn" data-type="brief">
+                            <i class="fas fa-compress"></i> Brief & Concise
+                        </button>
+                        <button class="prompt-btn" data-type="step_by_step">
+                            <i class="fas fa-tasks"></i> Step-by-Step Guide
+                        </button>
+                        <button class="prompt-btn" data-type="creative">
+                            <i class="fas fa-lightbulb"></i> Creative Response
+                        </button>
+                        <button class="prompt-btn" data-type="technical">
+                            <i class="fas fa-code"></i> Technical & Precise
+                        </button>
+                        <button class="prompt-btn" data-type="custom">
+                            <i class="fas fa-edit"></i> Custom Prompt
+                        </button>
+                    </div>
+                    
+                    <div id="customPromptSection" style="display: none; margin-top: 15px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">Enter your custom prompt:</label>
+                        <textarea 
+                            id="customPromptInput" 
+                            placeholder="Example: Act as a teacher and explain this concept with examples..."
+                            style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; min-height: 100px; resize: vertical;"
+                        ></textarea>
+                        <p style="font-size: 11px; color: #999; margin-top: 5px;">💡 Tip: Be specific about the role, tone, and format you want!</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-chart-line"></i> Performance</h3>
+                    <div class="performance-info">
+                        <div><strong>Model:</strong> <span id="currentModel">Nova Lite</span></div>
+                        <div><strong>Status:</strong> <span style="color: #4caf50;">● Ready</span></div>
+                        <div><strong>Response Time:</strong> <span id="responseTime">-</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-area">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <h2>👋 Welcome to RsChat_Boot_AI!</h2>
+                        <p>Your free AI assistant for learning and problem-solving.</p>
+                        <p style="margin-top: 10px;">Ask me anything - I'm here to help students like you!</p>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <i class="fas fa-spinner fa-spin"></i> AI is thinking...
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="userInput" 
+                            placeholder="Type your question here..."
+                            autocomplete="off"
+                        >
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                        <button class="reset-btn" id="resetBtn">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPromptType = 'general';
+        let startTime;
+
+        // Prompt type selection
+        document.querySelectorAll('.prompt-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.prompt-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedPromptType = this.dataset.type;
+                
+                // Show/hide custom prompt section
+                const customSection = document.getElementById('customPromptSection');
+                if (selectedPromptType === 'custom') {
+                    customSection.style.display = 'block';
+                } else {
+                    customSection.style.display = 'none';
+                }
+            });
+        });
+
+        // Model selection
+        document.getElementById('modelSelect').addEventListener('change', function() {
+            fetch('/change_model', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({model_id: this.value})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('currentModel').textContent = this.options[this.selectedIndex].text;
+                addSystemMessage('Model changed to: ' + this.options[this.selectedIndex].text);
+            });
+        });
+
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Get custom prompt if selected
+            let customPrompt = '';
+            if (selectedPromptType === 'custom') {
+                customPrompt = document.getElementById('customPromptInput').value.trim();
+                if (!customPrompt) {
+                    alert('Please enter a custom prompt or select a different prompt type.');
+                    return;
+                }
+            }
+
+            addUserMessage(message);
+            input.value = '';
+            
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('sendBtn').disabled = true;
+            startTime = Date.now();
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    message: message,
+                    prompt_type: selectedPromptType,
+                    custom_prompt: customPrompt
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseTime = ((Date.now() - startTime) / 1000).toFixed(2);
+                document.getElementById('responseTime').textContent = responseTime + 's';
+                
+                addBotMessage(data.response);
+                document.getElementById('tokenCount').textContent = data.tokens;
+                document.getElementById('messageCount').textContent = data.message_count;
+                
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('sendBtn').disabled = false;
+            })
+            .catch(error => {
+                addBotMessage('Error: ' + error.message);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('sendBtn').disabled = false;
+            });
+        }
+
+        // Add user message to chat
+        function addUserMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const welcome = chatMessages.querySelector('.welcome-message');
+            if (welcome) welcome.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.innerHTML = `
+                <div class="message-icon"><i class="fas fa-user"></i></div>
+                <div class="message-content">
+                    <div class="message-label">You</div>
+                    <div class="message-text">${escapeHtml(text)}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add bot message to chat
+        function addBotMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.innerHTML = `
+                <div class="message-icon"><i class="fas fa-robot"></i></div>
+                <div class="message-content">
+                    <div class="message-label">RsChat_Boot_AI</div>
+                    <div class="message-text">${escapeHtml(text)}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add system message
+        function addSystemMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.style.textAlign = 'center';
+            messageDiv.style.padding = '10px';
+            messageDiv.style.color = '#666';
+            messageDiv.style.fontSize = '13px';
+            messageDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${escapeHtml(text)}`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Reset chat
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset the chat?')) {
+                fetch('/reset', {method: 'POST'})
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('chatMessages').innerHTML = `
+                        <div class="welcome-message">
+                            <h2>👋 Welcome to RsChat_Boot_AI!</h2>
+                            <p>Your free AI assistant for learning and problem-solving.</p>
+                            <p style="margin-top: 10px;">Ask me anything - I'm here to help students like you!</p>
+                        </div>
+                    `;
+                    document.getElementById('tokenCount').textContent = '0';
+                    document.getElementById('messageCount').textContent = '0';
+                    document.getElementById('responseTime').textContent = '-';
+                });
+            }
+        });
+
+        // Send on Enter key
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Send button click
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+    </script>
+</body>
+</html>

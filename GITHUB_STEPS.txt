@@ -1,0 +1,44 @@
+# Steps to Push to GitHub
+
+## 1. Initialize Git Repository
+cd c:\Users\OTS-SYSTEM-LAP-020\Desktop\AWS_BEDROCK_PROJECT
+git init
+
+## 2. Add All Files
+git add .
+
+## 3. Commit Changes
+git commit -m "Initial commit: RsChat_Boot_AI - AI Assistant for Students"
+
+## 4. Create GitHub Repository
+- Go to https://github.com
+- Click "New Repository"
+- Name: RsChat_Boot_AI
+- Description: Free AI Assistant for Students powered by AWS Bedrock
+- Keep it Public or Private
+- DO NOT initialize with README (we already have one)
+- Click "Create Repository"
+
+## 5. Link to GitHub Repository
+git remote add origin https://github.com/YOUR_USERNAME/RsChat_Boot_AI.git
+
+## 6. Push to GitHub
+git branch -M main
+git push -u origin main
+
+## Alternative: If you already have a repository
+
+git remote set-url origin https://github.com/YOUR_USERNAME/RsChat_Boot_AI.git
+git push -u origin main
+
+## To Update Later (After Making Changes)
+
+git add .
+git commit -m "Description of your changes"
+git push
+
+## Important Notes:
+- Replace YOUR_USERNAME with your actual GitHub username
+- Make sure run_app.bat is NOT pushed (it's in .gitignore)
+- Never commit AWS credentials
+- The .gitignore file protects sensitive data

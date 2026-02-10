@@ -1,24 +1,50 @@
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-dist/
-build/
-*.log
-
-# Virtual environments
-exercise1/
+*$py.class
+*.so
+.Python
+env/
 venv/
-.env/
-.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Flask
+instance/
+.webassets-cache
+
+# Environment variables
+.env
+*.bat
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Archives
-*.zip
+# Logs
+*.log
+
+# AWS Credentials (IMPORTANT - Never commit these!)
+*credentials*
+*access_key*
+*secret_key*
